@@ -12,3 +12,8 @@ export interface ResponseProps {
 export interface UrlBoxProps {
   onChange: (value: string) => void;
 }
+
+export interface QueryHistoryProps {
+  queries: object[];
+  handleClick: (query: string) => void;
+}

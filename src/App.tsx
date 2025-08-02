@@ -6,7 +6,12 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/ext-language_tools";
 
-import type { JsonError, ResponseProps, UrlBoxProps } from "./types";
+import type {
+  JsonError,
+  ResponseProps,
+  UrlBoxProps,
+  QueryHistoryProps,
+} from "./types";
 import { configAce } from "./utils";
 
 const ResponseDisplay = ({ res }: ResponseProps) => {
@@ -33,16 +38,15 @@ const UrlBox = ({ onChange }: UrlBoxProps) => {
   );
 };
 
-interface QueryHistoryProps {
-  queries: object[];
-}
-
-const QueryHistory = ({ queries }: QueryHistoryProps) => {
+const QueryHistory = ({ queries, handleClick }: QueryHistoryProps) => {
   return (
     <div>
       <ul>
         {queries.map((query, index) => (
-          <li key={index}>
+          <li
+            key={index}
+            onClick={() => handleClick(JSON.stringify(query, null, 2))}
+          >
             <QueryHistoryEntry res={query} />{" "}
           </li>
         ))}
@@ -54,7 +58,7 @@ const QueryHistory = ({ queries }: QueryHistoryProps) => {
 const QueryHistoryEntry = ({ res }: ResponseProps) => {
   return (
     <div>
-      <pre>{JSON.stringify(res, null, 2).slice(1, -1)}</pre>
+      <pre>{JSON.stringify(res, null, 2).slice(1, -1).replaceAll('"', "")}</pre>
     </div>
   );
 };
@@ -65,7 +69,8 @@ const App = () => {
   const [url, setUrl] = useState<string>(""); // https://jsonplaceholder.typicode.com/posts
   const [response, setResponse] = useState<object | undefined>(undefined);
   const [queries, setQueries] = useState<object[]>([]);
-  const [method, setMethod] = useState<string>("");
+  const [savedQueries, setSavedQueries] = useState<object[]>([]);
+  const [method, setMethod] = useState<string>("GET");
 
   const onUrlChange = (value: string) => {
     setUrl(value);
@@ -77,31 +82,58 @@ const App = () => {
 
   useEffect(() => {
     configAce();
+    // getSavedQueries
   }, []);
 
   const val = (annotations: JsonError[]) => {
     console.log(annotations);
   };
 
+  const saveQuery = () => {
+    setSavedQueries(savedQueries.concat(JSON.parse(query)));
+    // POST query to backend
+  };
+
+  const selectQuery = (q: string) => {
+    // Set clicked query as selected query
+    console.log(q);
+    SetQuery(q);
+  };
+
   const postQuery = async () => {
-    switch (method) {
-      case "GET":
-        break;
-      case "POST":
-        break;
-      case "PUT":
-        break;
-      case "DELETE":
-        break;
-      default:
-        throw new Error("Method not found.");
-    }
     try {
-      const parsedQuery = JSON.parse(query);
-      const res = await axios.post(url, parsedQuery);
-      console.log(res.data);
-      setQueries(queries.concat(parsedQuery));
-      setResponse(res.data);
+      let parsedQuery;
+      if (query) {
+        parsedQuery = JSON.parse(query);
+      }
+
+      switch (method) {
+        case "GET":
+          {
+            const res = await axios.get(url);
+            setResponse(res.data);
+            setQueries(
+              queries.concat({
+                Method: method,
+                URL: url,
+              })
+            );
+          }
+          break;
+        case "POST":
+          {
+            const res = await axios.post(url, parsedQuery);
+            setQueries(queries.concat(parsedQuery));
+            setResponse(res.data);
+          }
+          break;
+        case "PUT":
+          break;
+        case "DELETE":
+          break;
+        default:
+          throw new Error("Method not found.");
+      }
     } catch (e) {
       console.log(e);
     }
@@ -124,13 +156,14 @@ const App = () => {
       <button onClick={() => setUseErrors(!useErrors)}>
         Errors: {useErrors ? "On." : "Off."}
       </button>
-      <ResponseDisplay res={response} />
       <UrlBox onChange={onUrlChange} />
-      <QueryHistory queries={queries} />
+      <QueryHistory queries={queries} handleClick={selectQuery} />
       <button onClick={() => setMethod("GET")}>GET</button>
       <button onClick={() => setMethod("POST")}>POST</button>
       <button onClick={() => setMethod("PUT")}>PUT</button>
       <button onClick={() => setMethod("DELETE")}>DELETE</button>
+      <button onClick={saveQuery}>Save query</button>
+      <ResponseDisplay res={response} />
     </div>
   );
 };
