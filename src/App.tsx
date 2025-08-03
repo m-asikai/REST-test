@@ -1,5 +1,6 @@
 import AceEditor from "react-ace";
 import { useState, useEffect } from "react";
+import { Container } from "@mui/material";
 import axios from "axios";
 
 import "ace-builds/src-noconflict/mode-json";
@@ -10,7 +11,8 @@ import type {
   JsonError,
   ResponseProps,
   UrlBoxProps,
-  QueryHistoryProps,
+  QueryListProps,
+  Query,
 } from "./types";
 import { configAce } from "./utils";
 
@@ -38,16 +40,17 @@ const UrlBox = ({ onChange }: UrlBoxProps) => {
   );
 };
 
-const QueryHistory = ({ queries, handleClick }: QueryHistoryProps) => {
+const QueryList = ({ queries, handleClick }: QueryListProps) => {
   return (
     <div>
       <ul>
         {queries.map((query, index) => (
-          <li
-            key={index}
-            onClick={() => handleClick(JSON.stringify(query, null, 2))}
-          >
-            <QueryHistoryEntry res={query} />{" "}
+          <li key={index} onClick={() => handleClick(query)}>
+            <QueryListEntry
+              query={query.query}
+              method={query.method}
+              url={query.url}
+            />{" "}
           </li>
         ))}
       </ul>
@@ -55,10 +58,22 @@ const QueryHistory = ({ queries, handleClick }: QueryHistoryProps) => {
   );
 };
 
-const QueryHistoryEntry = ({ res }: ResponseProps) => {
+const QueryListEntry = ({ query, method, url }: Query) => {
+  if (!query) {
+    return (
+      <div>
+        <p>Method: {method}</p>
+        <p>Url: {url}</p>
+      </div>
+    );
+  }
   return (
     <div>
-      <pre>{JSON.stringify(res, null, 2).slice(1, -1).replaceAll('"', "")}</pre>
+      <pre>
+        <p>Method: {method}</p>
+        <p>Url: {url}</p>
+        Query: {JSON.stringify(query, null, 2).slice(1, -1).replaceAll('"', "")}
+      </pre>
     </div>
   );
 };
@@ -68,8 +83,8 @@ const App = () => {
   const [useErrors, setUseErrors] = useState<boolean>(false);
   const [url, setUrl] = useState<string>(""); // https://jsonplaceholder.typicode.com/posts
   const [response, setResponse] = useState<object | undefined>(undefined);
-  const [queries, setQueries] = useState<object[]>([]);
-  const [savedQueries, setSavedQueries] = useState<object[]>([]);
+  const [queries, setQueries] = useState<Query[]>([]);
+  const [savedQueries, setSavedQueries] = useState<Query[]>([]);
   const [method, setMethod] = useState<string>("GET");
 
   const onUrlChange = (value: string) => {
@@ -90,14 +105,23 @@ const App = () => {
   };
 
   const saveQuery = () => {
-    setSavedQueries(savedQueries.concat(JSON.parse(query)));
+    setSavedQueries(
+      savedQueries.concat({
+        method,
+        query: query ? JSON.parse(query) : undefined,
+        url,
+      })
+    );
     // POST query to backend
   };
 
-  const selectQuery = (q: string) => {
-    // Set clicked query as selected query
-    console.log(q);
-    SetQuery(q);
+  const selectQuery = (query: Query) => {
+    setMethod(query.method);
+    setUrl(query.url);
+    if (query.query) {
+      SetQuery(JSON.stringify(query.query, null, 2));
+    }
+    console.log(query);
   };
 
   const postQuery = async () => {
@@ -114,8 +138,9 @@ const App = () => {
             setResponse(res.data);
             setQueries(
               queries.concat({
-                Method: method,
-                URL: url,
+                method,
+                query: undefined,
+                url,
               })
             );
           }
@@ -123,13 +148,41 @@ const App = () => {
         case "POST":
           {
             const res = await axios.post(url, parsedQuery);
-            setQueries(queries.concat(parsedQuery));
+            setQueries(
+              queries.concat({
+                method,
+                query: parsedQuery,
+                url,
+              })
+            );
             setResponse(res.data);
           }
           break;
         case "PUT":
+          {
+            const res = await axios.put(url, parsedQuery);
+            setQueries(
+              queries.concat({
+                method,
+                query: parsedQuery,
+                url,
+              })
+            );
+            setResponse(res.data);
+          }
           break;
         case "DELETE":
+          {
+            const res = await axios.delete(url);
+            setResponse(res.data);
+            setQueries(
+              queries.concat({
+                method,
+                query: undefined,
+                url,
+              })
+            );
+          }
           break;
         default:
           throw new Error("Method not found.");
@@ -140,7 +193,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <Container>
       <AceEditor
         mode="json"
         theme="monokai"
@@ -148,8 +201,11 @@ const App = () => {
         name="placeholder"
         value={query}
         onValidate={val}
+        width="80%"
+        height="400px"
         setOptions={{
           useWorker: useErrors,
+          fontSize: "16px",
         }}
       ></AceEditor>
       <button onClick={postQuery}>Post</button>
@@ -157,14 +213,15 @@ const App = () => {
         Errors: {useErrors ? "On." : "Off."}
       </button>
       <UrlBox onChange={onUrlChange} />
-      <QueryHistory queries={queries} handleClick={selectQuery} />
+      <QueryList queries={queries} handleClick={selectQuery} />
+      <QueryList queries={savedQueries} handleClick={selectQuery} />
       <button onClick={() => setMethod("GET")}>GET</button>
       <button onClick={() => setMethod("POST")}>POST</button>
       <button onClick={() => setMethod("PUT")}>PUT</button>
       <button onClick={() => setMethod("DELETE")}>DELETE</button>
       <button onClick={saveQuery}>Save query</button>
       <ResponseDisplay res={response} />
-    </div>
+    </Container>
   );
 };
 

@@ -13,7 +13,13 @@ export interface UrlBoxProps {
   onChange: (value: string) => void;
 }
 
-export interface QueryHistoryProps {
-  queries: object[];
-  handleClick: (query: string) => void;
+export interface QueryListProps {
+  queries: Query[];
+  handleClick: (query: Query) => void;
+}
+
+export interface Query {
+  method: string;
+  url: string;
+  query?: object;
 }
