@@ -18,7 +18,16 @@ export interface QueryListProps {
   handleClick: (query: Query) => void;
 }
 
+export interface SavedQuery extends Query {
+  handleDelete: (id: string) => void;
+}
+
+export interface SavedQueryListProps extends QueryListProps {
+  handleDelete: (id: string) => void;
+}
+
 export interface Query {
+  id: string;
   method: string;
   url: string;
   query?: object;

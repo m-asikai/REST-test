@@ -1,82 +1,19 @@
 import AceEditor from "react-ace";
 import { useState, useEffect } from "react";
 import { Container } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-
+import { configAce } from "./utils";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/ext-language_tools";
 
-import type {
-  JsonError,
-  ResponseProps,
-  UrlBoxProps,
-  QueryListProps,
-  Query,
-} from "./types";
-import { configAce } from "./utils";
+import type { JsonError, Query } from "./types";
 
-const ResponseDisplay = ({ res }: ResponseProps) => {
-  if (!res) {
-    return null;
-  }
-  return (
-    <div>
-      <pre>
-        Response:
-        {JSON.stringify(res, null, 2).slice(1, -1)}
-      </pre>
-    </div>
-  );
-};
-
-const UrlBox = ({ onChange }: UrlBoxProps) => {
-  return (
-    <input
-      type="text"
-      placeholder="Enter URL"
-      onChange={(e) => onChange(e.target.value)}
-    />
-  );
-};
-
-const QueryList = ({ queries, handleClick }: QueryListProps) => {
-  return (
-    <div>
-      <ul>
-        {queries.map((query, index) => (
-          <li key={index} onClick={() => handleClick(query)}>
-            <QueryListEntry
-              query={query.query}
-              method={query.method}
-              url={query.url}
-            />{" "}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-const QueryListEntry = ({ query, method, url }: Query) => {
-  if (!query) {
-    return (
-      <div>
-        <p>Method: {method}</p>
-        <p>Url: {url}</p>
-      </div>
-    );
-  }
-  return (
-    <div>
-      <pre>
-        <p>Method: {method}</p>
-        <p>Url: {url}</p>
-        Query: {JSON.stringify(query, null, 2).slice(1, -1).replaceAll('"', "")}
-      </pre>
-    </div>
-  );
-};
+import ResponseDisplay from "./Components/ResponseDisplay";
+import UrlBox from "./Components/UrlBox";
+import QueryList from "./Components/QueryList";
+import SavedQueryList from "./Components/SavedQueryList";
 
 const App = () => {
   const [query, SetQuery] = useState<string>("");
@@ -107,12 +44,18 @@ const App = () => {
   const saveQuery = () => {
     setSavedQueries(
       savedQueries.concat({
+        id: uuidv4(),
         method,
         query: query ? JSON.parse(query) : undefined,
         url,
       })
     );
     // POST query to backend
+    // DELETE query from backend and from savedQueries
+  };
+
+  const handleDelete = (id: string) => {
+    setSavedQueries(savedQueries.filter((query) => query.id !== id));
   };
 
   const selectQuery = (query: Query) => {
@@ -138,6 +81,7 @@ const App = () => {
             setResponse(res.data);
             setQueries(
               queries.concat({
+                id: uuidv4(),
                 method,
                 query: undefined,
                 url,
@@ -150,6 +94,7 @@ const App = () => {
             const res = await axios.post(url, parsedQuery);
             setQueries(
               queries.concat({
+                id: uuidv4(),
                 method,
                 query: parsedQuery,
                 url,
@@ -163,6 +108,7 @@ const App = () => {
             const res = await axios.put(url, parsedQuery);
             setQueries(
               queries.concat({
+                id: uuidv4(),
                 method,
                 query: parsedQuery,
                 url,
@@ -177,6 +123,7 @@ const App = () => {
             setResponse(res.data);
             setQueries(
               queries.concat({
+                id: uuidv4(),
                 method,
                 query: undefined,
                 url,
@@ -194,6 +141,7 @@ const App = () => {
 
   return (
     <Container>
+      <p>https://jsonplaceholder.typicode.com/posts</p>
       <AceEditor
         mode="json"
         theme="monokai"
@@ -214,7 +162,11 @@ const App = () => {
       </button>
       <UrlBox onChange={onUrlChange} />
       <QueryList queries={queries} handleClick={selectQuery} />
-      <QueryList queries={savedQueries} handleClick={selectQuery} />
+      <SavedQueryList
+        queries={savedQueries}
+        handleClick={selectQuery}
+        handleDelete={handleDelete}
+      />
       <button onClick={() => setMethod("GET")}>GET</button>
       <button onClick={() => setMethod("POST")}>POST</button>
       <button onClick={() => setMethod("PUT")}>PUT</button>

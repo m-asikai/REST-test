@@ -13,11 +13,13 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.2.0",
+    "@types/uuid": "^10.0.0",
     "ace-builds": "^1.43.2",
     "axios": "^1.11.0",
     "react": "^19.1.0",
     "react-ace": "^14.0.1",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
