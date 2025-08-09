@@ -8,7 +8,7 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/ext-language_tools";
 
-import type { JsonError, Query } from "../types";
+import type { Config, JsonError, Query } from "../types";
 
 import ResponseDisplay from "./ResponseDisplay";
 
@@ -18,12 +18,13 @@ import SavedQueryList from "./SavedQueryList";
 
 const Home = () => {
   const [query, SetQuery] = useState<string>("");
-  const [useErrors, setUseErrors] = useState<boolean>(false);
+  const [useErrors, setUseErrors] = useState<boolean>(true);
   const [url, setUrl] = useState<string>(""); // https://jsonplaceholder.typicode.com/posts
   const [response, setResponse] = useState<object | undefined>(undefined);
   const [queries, setQueries] = useState<Query[]>([]);
   const [savedQueries, setSavedQueries] = useState<Query[]>([]);
   const [method, setMethod] = useState<string>("GET");
+  const [config, setConfig] = useState<Config | undefined>();
 
   const onUrlChange = (value: string) => {
     setUrl(value);
@@ -68,6 +69,19 @@ const Home = () => {
     console.log(query);
   };
 
+  const includesQuery = (query: Query): boolean => {
+    queries.forEach((q) => {
+      if (
+        q.method === query.method &&
+        q.url === query.url &&
+        q.query === query.query
+      ) {
+        return true;
+      }
+    });
+    return false;
+  };
+
   const postQuery = async () => {
     try {
       let parsedQuery;
@@ -78,44 +92,47 @@ const Home = () => {
       switch (method) {
         case "GET":
           {
-            const res = await axios.get(url);
+            const res = await axios.get(url, undefined);
             setResponse(res.data);
-            setQueries(
-              queries.concat({
-                id: uuidv4(),
-                method,
-                query: undefined,
-                url,
-              })
-            );
+            const userQuery: Query = {
+              id: uuidv4(),
+              method,
+              query: undefined,
+              url,
+            };
+            if (!includesQuery(userQuery) && queries.length === 0) {
+              setQueries(queries.concat(userQuery));
+            }
           }
           break;
         case "POST":
           {
             const res = await axios.post(url, parsedQuery);
             console.log(res.data);
-            setQueries(
-              queries.concat({
-                id: uuidv4(),
-                method,
-                query: parsedQuery,
-                url,
-              })
-            );
+            const userQuery: Query = {
+              id: uuidv4(),
+              method,
+              query: parsedQuery,
+              url,
+            };
+            if (!includesQuery(userQuery) && queries.length === 0) {
+              setQueries(queries.concat(userQuery));
+            }
             setResponse(res.data);
           }
           break;
         case "PUT":
           {
             const res = await axios.put(url, parsedQuery);
-            setQueries(
-              queries.concat({
-                id: uuidv4(),
-                method,
-                query: parsedQuery,
-                url,
-              })
-            );
+            const userQuery: Query = {
+              id: uuidv4(),
+              method,
+              query: parsedQuery,
+              url,
+            };
+            if (!includesQuery(userQuery) && queries.length === 0) {
+              setQueries(queries.concat(userQuery));
+            }
             setResponse(res.data);
           }
           break;
@@ -123,14 +140,15 @@ const Home = () => {
           {
             const res = await axios.delete(url);
             setResponse(res.data);
-            setQueries(
-              queries.concat({
-                id: uuidv4(),
-                method,
-                query: undefined,
-                url,
-              })
-            );
+            const userQuery: Query = {
+              id: uuidv4(),
+              method,
+              query: undefined,
+              url,
+            };
+            if (!includesQuery(userQuery) && queries.length === 0) {
+              setQueries(queries.concat(userQuery));
+            }
           }
           break;
         default:

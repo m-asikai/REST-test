@@ -32,3 +32,9 @@ export interface Query {
   url: string;
   query?: object;
 }
+
+export interface Config {
+  header: {
+    Authorization: string;
+  };
+}

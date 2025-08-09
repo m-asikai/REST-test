@@ -1,7 +1,4 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import "ace-builds/src-noconflict/mode-json";
-import "ace-builds/src-noconflict/theme-monokai";
-import "ace-builds/src-noconflict/ext-language_tools";
 
 import Login from "./Components/Login";
 import Register from "./Components/Register";
