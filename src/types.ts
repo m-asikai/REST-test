@@ -38,3 +38,9 @@ export interface Config {
     Authorization: string;
   };
 }
+
+export interface QueryProps {
+  method: string;
+  url: string;
+  query?: string;
+}

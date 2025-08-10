@@ -1,10 +1,11 @@
+import { TextField } from "@mui/material";
 import type { UrlBoxProps } from "../types";
 
 const UrlBox = ({ onChange }: UrlBoxProps) => {
   return (
-    <input
-      type="text"
-      placeholder="Enter URL"
+    <TextField
+      label="URL"
+      variant="outlined"
       onChange={(e) => onChange(e.target.value)}
     />
   );

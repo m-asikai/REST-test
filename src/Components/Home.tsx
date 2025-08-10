@@ -1,20 +1,21 @@
 import AceEditor from "react-ace";
 import { useState, useEffect } from "react";
-import { Container } from "@mui/material";
+import { Button, Container, type SelectChangeEvent } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import { configAce } from "../utils";
+import { type AxiosRequestConfig } from "axios";
+import { configAce, postQuery } from "../utils";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/ext-language_tools";
 
-import type { Config, JsonError, Query } from "../types";
+import type { Config, JsonError, Query, QueryProps } from "../types";
 
 import ResponseDisplay from "./ResponseDisplay";
 
 import UrlBox from "./UrlBox";
 import QueryList from "./QueryList";
 import SavedQueryList from "./SavedQueryList";
+import MethodSelector from "./MethodSelector";
 
 const Home = () => {
   const [query, SetQuery] = useState<string>("");
@@ -24,7 +25,8 @@ const Home = () => {
   const [queries, setQueries] = useState<Query[]>([]);
   const [savedQueries, setSavedQueries] = useState<Query[]>([]);
   const [method, setMethod] = useState<string>("GET");
-  const [config, setConfig] = useState<Config | undefined>();
+  const [config, setConfig] = useState<AxiosRequestConfig<Config>>();
+  const [authorization, setAuthorization] = useState<string>("");
 
   const onUrlChange = (value: string) => {
     setUrl(value);
@@ -40,7 +42,7 @@ const Home = () => {
   }, []);
 
   const val = (annotations: JsonError[]) => {
-    console.log(annotations);
+    //console.log(annotations);
   };
 
   const saveQuery = () => {
@@ -69,99 +71,51 @@ const Home = () => {
     console.log(query);
   };
 
-  const includesQuery = (query: Query): boolean => {
-    queries.forEach((q) => {
-      if (
-        q.method === query.method &&
-        q.url === query.url &&
-        q.query === query.query
-      ) {
-        return true;
-      }
+  const includesQuery = (arg: Query): boolean => {
+    return queries.some((q) => {
+      return (
+        q.method === arg.method &&
+        q.url === arg.url &&
+        JSON.stringify(q.query) === JSON.stringify(arg.query)
+      );
     });
-    return false;
   };
 
-  const postQuery = async () => {
+  const queryHandler = async () => {
     try {
-      let parsedQuery;
-      if (query) {
-        parsedQuery = JSON.parse(query);
-      }
+      const queryToPost: QueryProps = {
+        method,
+        query: query,
+        url,
+      };
+      const res = await postQuery(queryToPost, config);
+      setResponse(res);
+      const userQuery: Query = {
+        id: uuidv4(),
+        method,
+        query:
+          method === "GET" || method === "DELETE"
+            ? undefined
+            : JSON.parse(query),
+        url,
+      };
 
-      switch (method) {
-        case "GET":
-          {
-            const res = await axios.get(url, undefined);
-            setResponse(res.data);
-            const userQuery: Query = {
-              id: uuidv4(),
-              method,
-              query: undefined,
-              url,
-            };
-            if (!includesQuery(userQuery) && queries.length === 0) {
-              setQueries(queries.concat(userQuery));
-            }
-          }
-          break;
-        case "POST":
-          {
-            const res = await axios.post(url, parsedQuery);
-            console.log(res.data);
-            const userQuery: Query = {
-              id: uuidv4(),
-              method,
-              query: parsedQuery,
-              url,
-            };
-            if (!includesQuery(userQuery) && queries.length === 0) {
-              setQueries(queries.concat(userQuery));
-            }
-            setResponse(res.data);
-          }
-          break;
-        case "PUT":
-          {
-            const res = await axios.put(url, parsedQuery);
-            const userQuery: Query = {
-              id: uuidv4(),
-              method,
-              query: parsedQuery,
-              url,
-            };
-            if (!includesQuery(userQuery) && queries.length === 0) {
-              setQueries(queries.concat(userQuery));
-            }
-            setResponse(res.data);
-          }
-          break;
-        case "DELETE":
-          {
-            const res = await axios.delete(url);
-            setResponse(res.data);
-            const userQuery: Query = {
-              id: uuidv4(),
-              method,
-              query: undefined,
-              url,
-            };
-            if (!includesQuery(userQuery) && queries.length === 0) {
-              setQueries(queries.concat(userQuery));
-            }
-          }
-          break;
-        default:
-          throw new Error("Method not found.");
+      if (!includesQuery(userQuery)) {
+        setQueries(queries.concat(userQuery));
       }
     } catch (e) {
       console.log(e);
     }
   };
 
+  const handleMethod = (e: SelectChangeEvent) => {
+    setMethod(e.target.value);
+  };
+
   return (
-    <Container>
+    <Container sx={{ textAlign: "center" }}>
       <p>https://jsonplaceholder.typicode.com/posts</p>
+      <UrlBox onChange={onUrlChange} />
       <AceEditor
         mode="json"
         theme="monokai"
@@ -175,23 +129,36 @@ const Home = () => {
           useWorker: useErrors,
           fontSize: "16px",
         }}
+        style={{ margin: "0.5rem auto 0.5rem auto" }}
       ></AceEditor>
-      <button onClick={postQuery}>Post</button>
-      <button onClick={() => setUseErrors(!useErrors)}>
+      <Button
+        variant="outlined"
+        onClick={queryHandler}
+        sx={{ fontWeight: "bold", borderWidth: "3px", backgroundColor: "#eee" }}
+      >
+        Send query
+      </Button>
+      <Button
+        variant="outlined"
+        onClick={() => setUseErrors(!useErrors)}
+        sx={{ fontWeight: "bold", borderWidth: "3px", backgroundColor: "#eee" }}
+      >
         Errors: {useErrors ? "On." : "Off."}
-      </button>
-      <UrlBox onChange={onUrlChange} />
+      </Button>
       <QueryList queries={queries} handleClick={selectQuery} />
       <SavedQueryList
         queries={savedQueries}
         handleClick={selectQuery}
         handleDelete={handleDelete}
       />
-      <button onClick={() => setMethod("GET")}>GET</button>
-      <button onClick={() => setMethod("POST")}>POST</button>
-      <button onClick={() => setMethod("PUT")}>PUT</button>
-      <button onClick={() => setMethod("DELETE")}>DELETE</button>
-      <button onClick={saveQuery}>Save query</button>
+      <MethodSelector method={method} handleChange={handleMethod} />
+      <Button
+        variant="outlined"
+        onClick={saveQuery}
+        sx={{ fontWeight: "bold", borderWidth: "3px", backgroundColor: "#eee" }}
+      >
+        Save query
+      </Button>
       <ResponseDisplay res={response} />
     </Container>
   );
