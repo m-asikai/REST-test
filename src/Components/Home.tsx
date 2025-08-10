@@ -16,6 +16,7 @@ import UrlBox from "./UrlBox";
 import QueryList from "./QueryList";
 import SavedQueryList from "./SavedQueryList";
 import MethodSelector from "./MethodSelector";
+import AuthSelector from "./AuthSelector";
 
 const Home = () => {
   const [query, SetQuery] = useState<string>("");
@@ -27,6 +28,7 @@ const Home = () => {
   const [method, setMethod] = useState<string>("GET");
   const [config, setConfig] = useState<AxiosRequestConfig<Config>>();
   const [authorization, setAuthorization] = useState<string>("");
+  const [token, setToken] = useState<string>("");
 
   const onUrlChange = (value: string) => {
     setUrl(value);
@@ -112,10 +114,23 @@ const Home = () => {
     setMethod(e.target.value);
   };
 
+  const handleAuth = (e: SelectChangeEvent) => {
+    setAuthorization(e.target.value);
+  };
+
+  const handleToken = (token: string) => {
+    setToken(token);
+  };
+
   return (
     <Container sx={{ textAlign: "center" }}>
       <p>https://jsonplaceholder.typicode.com/posts</p>
       <UrlBox onChange={onUrlChange} />
+      <AuthSelector
+        handleChange={handleAuth}
+        handleToken={handleToken}
+        authorization={authorization}
+      />
       <AceEditor
         mode="json"
         theme="monokai"
