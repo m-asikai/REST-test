@@ -4,14 +4,9 @@ import {
   MenuItem,
   Select,
   TextField,
-  type SelectChangeEvent,
 } from "@mui/material";
 
-interface AuthSelectorProps {
-  handleChange: (e: SelectChangeEvent) => void;
-  handleToken: (token: string) => void;
-  authorization: string;
-}
+import type { AuthSelectorProps } from "../types";
 
 const AuthSelector = ({
   handleChange,
@@ -20,7 +15,7 @@ const AuthSelector = ({
 }: AuthSelectorProps) => {
   return (
     <>
-      <FormControl sx={{ width: "fit-content", minWidth: 120 }}>
+      <FormControl sx={{ width: "fit-content", minWidth: 140 }}>
         <InputLabel id="input">Authorization</InputLabel>
         <Select
           labelId="input"
@@ -32,12 +27,12 @@ const AuthSelector = ({
           <MenuItem value={"Basic "}>Basic</MenuItem>
           <MenuItem value={"Bearer "}>Bearer</MenuItem>
         </Select>
-        <TextField
-          label="Token"
-          variant="outlined"
-          onChange={(e) => handleToken(e.target.value)}
-        ></TextField>
       </FormControl>
+      <TextField
+        label="Token"
+        variant="outlined"
+        onChange={(e) => handleToken(e.target.value)}
+      ></TextField>
     </>
   );
 };

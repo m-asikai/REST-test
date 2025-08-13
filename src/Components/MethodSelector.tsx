@@ -12,7 +12,7 @@ interface SelectorProps {
 }
 
 const MethodSelector = ({ handleChange, method }: SelectorProps) => {
-  const getMethodColor = (methodType: string) => {
+  const getMethodColor = (methodType: string): string => {
     switch (methodType) {
       case "GET":
         return "green";
@@ -43,13 +43,25 @@ const MethodSelector = ({ handleChange, method }: SelectorProps) => {
             },
           }}
         >
-          <MenuItem value={"GET"} sx={{ color: "green", fontWeight: "bold" }}>
+          <MenuItem
+            value={"GET"}
+            sx={{
+              color: "green",
+              fontWeight: "bold",
+            }}
+          >
             GET
           </MenuItem>
           <MenuItem value={"POST"} sx={{ color: "blue", fontWeight: "bold" }}>
             POST
           </MenuItem>
-          <MenuItem value={"PUT"} sx={{ color: "orange", fontWeight: "bold" }}>
+          <MenuItem
+            value={"PUT"}
+            sx={{
+              color: "orange",
+              fontWeight: "bold",
+            }}
+          >
             PUT
           </MenuItem>
           <MenuItem value={"DELETE"} sx={{ color: "red", fontWeight: "bold" }}>

@@ -1,6 +1,8 @@
 import ace from "ace-builds/src-noconflict/ace";
-import type { Config, QueryProps } from "./types";
+import type { Config, QueryProps, Query } from "./types";
 import axios, { type AxiosRequestConfig } from "axios";
+
+const baseUrl = "http://localhost:3001";
 
 export const configAce = () => {
   ace.config.set(
@@ -45,4 +47,40 @@ export const postQuery = async (
     default:
       throw new Error("Method not found.");
   }
+};
+
+interface UserInfoProps {
+  user: {
+    username: string;
+    password: string;
+  };
+}
+
+interface QuerySaveProps {
+  username: string;
+  id: string;
+  url: string;
+  method: string;
+  query?: object;
+}
+
+export const registerAccount = async ({ user }: UserInfoProps) => {
+  const res = await axios.post(`${baseUrl}/api/user/register/`, user);
+  console.log(res.data);
+  return res.data;
+};
+
+export const loginAccount = async ({ user }: UserInfoProps) => {
+  const res = await axios.post(`${baseUrl}/api/user/login/`, user);
+  return res.data;
+};
+
+export const saveQueryDb = async (queryToSave: QuerySaveProps) => {
+  const res = await axios.post(`${baseUrl}/api/query/`, queryToSave);
+  return res.data;
+};
+
+export const getSavedQueries = async (username: string): Promise<Query[]> => {
+  const res = await axios.get(`${baseUrl}/api/query/${username}/queries`);
+  return res.data;
 };

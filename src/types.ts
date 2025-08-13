@@ -1,3 +1,5 @@
+import type { SelectChangeEvent } from "@mui/material";
+
 export interface JsonError {
   row: number;
   column: number;
@@ -43,4 +45,10 @@ export interface QueryProps {
   method: string;
   url: string;
   query?: string;
+}
+
+export interface AuthSelectorProps {
+  handleChange: (e: SelectChangeEvent) => void;
+  handleToken: (token: string) => void;
+  authorization: string;
 }

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./Components/Login";
 import Register from "./Components/Register";
@@ -7,9 +7,6 @@ import Home from "./Components/Home";
 const App = () => {
   return (
     <BrowserRouter>
-      <Link to="/login">Login</Link>
-      <Link to="/register">Register </Link>
-      <Link to="/">Home</Link>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
