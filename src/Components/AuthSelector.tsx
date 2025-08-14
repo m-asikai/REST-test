@@ -32,6 +32,11 @@ const AuthSelector = ({
         label="Token"
         variant="outlined"
         onChange={(e) => handleToken(e.target.value)}
+        slotProps={{
+          inputLabel: {
+            shrink: true,
+          },
+        }}
       ></TextField>
     </>
   );

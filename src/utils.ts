@@ -33,15 +33,15 @@ export const postQuery = async (
       return res.data;
     }
     case "POST": {
-      const res = await axios.post(args.url, parsedQuery);
+      const res = await axios.post(args.url, parsedQuery, config);
       return res.data;
     }
     case "PUT": {
-      const res = await axios.put(args.url, parsedQuery);
+      const res = await axios.put(args.url, parsedQuery, config);
       return res.data;
     }
     case "DELETE": {
-      const res = await axios.delete(args.url);
+      const res = await axios.delete(args.url, config);
       return res.data;
     }
     default:
@@ -82,5 +82,14 @@ export const saveQueryDb = async (queryToSave: QuerySaveProps) => {
 
 export const getSavedQueries = async (username: string): Promise<Query[]> => {
   const res = await axios.get(`${baseUrl}/api/query/${username}/queries`);
+  return res.data;
+};
+
+export const deleteQueryFromDb = async (
+  id: string,
+  config: AxiosRequestConfig<Config> | undefined
+) => {
+  console.log(id);
+  const res = await axios.delete(`${baseUrl}/api/query/${id}`, config);
   return res.data;
 };

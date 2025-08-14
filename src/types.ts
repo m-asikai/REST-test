@@ -13,6 +13,7 @@ export interface ResponseProps {
 
 export interface UrlBoxProps {
   onChange: (value: string) => void;
+  url: string;
 }
 
 export interface QueryListProps {
@@ -37,7 +38,7 @@ export interface Query {
 
 export interface Config {
   header: {
-    Authorization: string;
+    authorization: string;
   };
 }
 

@@ -9,9 +9,11 @@ const ResponseBox = ({ res }: ResponseProps) => {
         border: "2px solid #1976d2",
         borderRadius: 2,
         boxSizing: "content-box",
-        width: "100%",
+        width: "80%",
         padding: 0.5,
-        margin: 0.2,
+        paddingBottom: 2,
+        margin: "auto",
+        marginBottom: 1,
         boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
         "&:hover": {
           backgroundColor: "#c0dbf5ff",
@@ -32,7 +34,7 @@ const ResponseBox = ({ res }: ResponseProps) => {
           scrollbarWidth: "none",
         }}
       >
-        {JSON.stringify(res, null, 2).slice(1, -1).replaceAll('"', "")}
+        {JSON.stringify(res, null, 2).slice(1, -1)}
       </Typography>
     </Box>
   );

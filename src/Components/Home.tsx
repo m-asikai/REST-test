@@ -3,7 +3,13 @@ import { useState, useEffect } from "react";
 import { Container, Box, type SelectChangeEvent } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import { AxiosError, type AxiosRequestConfig } from "axios";
-import { configAce, getSavedQueries, postQuery, saveQueryDb } from "../utils";
+import {
+  configAce,
+  deleteQueryFromDb,
+  getSavedQueries,
+  postQuery,
+  saveQueryDb,
+} from "../utils";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-xcode";
 import "ace-builds/src-noconflict/ext-language_tools";
@@ -87,21 +93,34 @@ const Home = () => {
       url,
     };
     try {
-      const res = await saveQueryDb({
+      await saveQueryDb({
         username,
         ...queryToSave,
       });
-      console.log(res.data);
       setSavedQueries(savedQueries.concat(queryToSave));
     } catch (e) {
       console.log(e);
     }
-
-    // DELETE query from backend and from savedQueries
   };
 
-  const handleDelete = (id: string) => {
-    setSavedQueries(savedQueries.filter((query) => query.id !== id));
+  const handleDelete = async (id: string) => {
+    const t = localStorage.getItem("token");
+    console.log(t);
+    if (t) {
+      const con: AxiosRequestConfig<Config> = {
+        headers: {
+          authorization: `Bearer ${t}`,
+        },
+      };
+      try {
+        await deleteQueryFromDb(id, con);
+        setSavedQueries(savedQueries.filter((query) => query.id !== id));
+      } catch (e: unknown) {
+        if (e instanceof AxiosError) {
+          console.log(e.response?.data);
+        }
+      }
+    }
   };
 
   const selectQuery = (query: Query) => {
@@ -109,6 +128,8 @@ const Home = () => {
     setUrl(query.url);
     if (query.query) {
       SetQuery(JSON.stringify(query.query, null, 2));
+    } else {
+      SetQuery("");
     }
     console.log(query);
   };
@@ -133,7 +154,7 @@ const Home = () => {
       if (authorization && token) {
         setConfig({
           headers: {
-            Authorization: `${authorization} ${token}`,
+            authorization: `${authorization} ${token}`,
           },
         });
       }
@@ -198,31 +219,37 @@ const Home = () => {
         authorization={authorization}
         method={method}
         error={useErrors}
+        url={url}
       />
-      <Box sx={{ width: "80%", margin: "auto" }}>
-        <AceEditor
-          mode="json"
-          theme="xcode"
-          onChange={onQueryChange}
-          name="placeholder"
-          value={query}
-          onValidate={val}
-          width="100%"
-          height="300px"
-          setOptions={{
-            useWorker: useErrors,
-            fontSize: "16px",
-          }}
-          style={{ margin: "0.5rem auto 0.5rem auto", backgroundColor: "#eee" }}
-        ></AceEditor>
+      <Box sx={{ width: "100%", margin: "auto" }}>
+        <Box sx={{ display: "flex" }}>
+          <QueryList queries={queries} handleClick={selectQuery} />
+          <AceEditor
+            mode="json"
+            theme="xcode"
+            onChange={onQueryChange}
+            name="placeholder"
+            value={query}
+            onValidate={val}
+            width="100%"
+            height="300px"
+            setOptions={{
+              useWorker: useErrors,
+              fontSize: "16px",
+            }}
+            style={{
+              margin: "0.5rem auto 0.5rem auto",
+              backgroundColor: "#eee",
+            }}
+          ></AceEditor>
+          <SavedQueryList
+            queries={savedQueries}
+            handleClick={selectQuery}
+            handleDelete={handleDelete}
+          />
+        </Box>
         <ResponseDisplay res={response} />
       </Box>
-      <QueryList queries={queries} handleClick={selectQuery} />
-      <SavedQueryList
-        queries={savedQueries}
-        handleClick={selectQuery}
-        handleDelete={handleDelete}
-      />
     </Container>
   );
 };

@@ -15,6 +15,7 @@ interface QueryOptionBoxProps {
   authorization: string;
   method: string;
   error: boolean;
+  url: string;
 }
 
 const QueryOptionBox = (props: QueryOptionBoxProps) => {
@@ -29,7 +30,7 @@ const QueryOptionBox = (props: QueryOptionBoxProps) => {
           mt: 2,
         }}
       >
-        <UrlBox onChange={props.onUrlChange} />
+        <UrlBox onChange={props.onUrlChange} url={props.url} />
         <AuthSelector
           handleChange={props.handleAuth}
           handleToken={props.handleToken}

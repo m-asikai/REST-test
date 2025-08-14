@@ -16,23 +16,23 @@ const ResponseDisplay = ({ res }: ResponseProps) => {
         sx={{
           margin: "auto",
           marginTop: "8px",
-          width: "100%",
+          width: "80%",
           maxHeight: 200,
           overflow: "auto",
           scrollbarWidth: "none",
+          border: "3px solid #1976d2",
+          borderRadius: 1,
         }}
       >
         <Stack
           sx={{
-            border: "3px solid #1976d2",
-            borderRadius: 1,
             alignItems: "center",
             padding: 2,
             backgroundColor: "#cfdce8ff",
           }}
         >
-          {res.map((r, index) => {
-            return <ResponseBox res={r} key={index} />;
+          {res.map((r) => {
+            return <ResponseBox res={r} key={crypto.randomUUID()} />;
           })}
         </Stack>
       </Box>
