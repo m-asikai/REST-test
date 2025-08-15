@@ -238,8 +238,9 @@ const Home = () => {
               fontSize: "16px",
             }}
             style={{
-              margin: "0.5rem auto 0.5rem auto",
+              margin: "1rem auto 0.5rem auto",
               backgroundColor: "#eee",
+              boxSizing: "content-box",
             }}
           ></AceEditor>
           <SavedQueryList

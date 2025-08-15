@@ -1,6 +1,7 @@
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import type { SavedQuery } from "../types";
 import ClearIcon from "@mui/icons-material/Clear";
+import classes from "../styles.module.css";
 
 const SavedQueryListEntry = ({
   query,
@@ -16,6 +17,7 @@ const SavedQueryListEntry = ({
         backgroundColor: "#f0f4f8ff",
         "&:hover": {
           backgroundColor: "#c0dbf5ff",
+          cursor: "pointer",
         },
         borderRadius: 1,
         margin: 1,
@@ -36,36 +38,33 @@ const SavedQueryListEntry = ({
       >
         <ClearIcon />
       </IconButton>
-      <Typography variant="body2" sx={{ margin: 0, marginBottom: 1 }}>
+      <Typography
+        variant="body2"
+        sx={{ margin: 0, marginBottom: 1 }}
+        className={classes.text}
+      >
         Method: {method}
       </Typography>
       <Tooltip title={url}>
         <Typography
           variant="body2"
+          className={classes.text}
           sx={{
-            margin: 1,
-            marginBottom: 1,
-            textOverflow: "ellipsis",
-            overflow: "hidden",
+            [`&.${classes.text}`]: {
+              margin: 1,
+              marginBottom: 1,
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+            },
           }}
         >
           Url: {url}
         </Typography>
       </Tooltip>
       {query && (
-        <Typography
-          component="pre"
-          variant="body2"
-          sx={{
-            margin: 0,
-            fontFamily: "monospace",
-            fontSize: "12px",
-            whiteSpace: "pre-wrap",
-            wordBreak: "break-word",
-          }}
-        >
-          Query:{" "}
-          {JSON.stringify(query, null, 2).slice(1, -1).replaceAll('"', "")}
+        <Typography component="pre" variant="body2" className={classes.text}>
+          Query: {JSON.stringify(query, null, 2).slice(1, -1)}
         </Typography>
       )}
     </Box>

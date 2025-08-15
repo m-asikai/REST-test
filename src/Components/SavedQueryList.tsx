@@ -1,6 +1,7 @@
 import { Typography } from "@mui/material";
 import type { SavedQueryListProps } from "../types";
 import SavedQueryListEntry from "./SavedQueryListEntry";
+import classes from "../styles.module.css";
 
 const SavedQueryList = ({
   queries,
@@ -13,14 +14,10 @@ const SavedQueryList = ({
         sx={{
           fontFamily: "monospace",
           fontSize: "14px",
-          lineHeight: 1.4,
           margin: "auto",
-          marginLeft: 1,
           whiteSpace: "pre-wrap",
           wordBreak: "break-word",
           color: "#333",
-          overflow: "auto",
-          scrollbarWidth: "none",
         }}
       >
         No queries saved.
@@ -29,11 +26,11 @@ const SavedQueryList = ({
   }
   return (
     <div
+      className={classes.contentArea}
       style={{
         margin: "16px",
+        minHeight: 300,
         maxHeight: 300,
-        overflow: "auto",
-        scrollbarWidth: "thin",
       }}
     >
       {queries.map((query) => (

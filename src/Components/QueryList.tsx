@@ -1,6 +1,7 @@
 import type { QueryListProps } from "../types";
 import QueryListEntry from "./QueryListEntry";
 import { Typography } from "@mui/material";
+import classes from "../styles.module.css";
 
 const QueryList = ({ queries, handleClick }: QueryListProps) => {
   if (queries.length === 0) {
@@ -25,13 +26,12 @@ const QueryList = ({ queries, handleClick }: QueryListProps) => {
   }
   return (
     <div
+      className={classes.contentArea}
       style={{
-        margin: "16px",
-        marginRight: 16,
+        margin: 16,
+        minHeight: 300,
         maxHeight: 300,
         maxWidth: 100,
-        overflow: "auto",
-        scrollbarWidth: "thin",
       }}
     >
       {queries.map((query) => (

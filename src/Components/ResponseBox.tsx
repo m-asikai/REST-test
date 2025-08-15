@@ -1,12 +1,13 @@
 import { Box, Typography } from "@mui/material";
 import type { ResponseProps } from "../types";
+import classes from "../styles.module.css";
 
 const ResponseBox = ({ res }: ResponseProps) => {
   return (
     <Box
       sx={{
         backgroundColor: "#f8f9fa",
-        border: "2px solid #1976d2",
+        border: "2px solid  rgba(186, 186, 186, 1);",
         borderRadius: 2,
         boxSizing: "content-box",
         width: "80%",
@@ -22,14 +23,8 @@ const ResponseBox = ({ res }: ResponseProps) => {
     >
       <Typography
         component="pre"
+        className={classes.text}
         sx={{
-          fontFamily: "monospace",
-          fontSize: "14px",
-          lineHeight: 1.4,
-          margin: 0,
-          whiteSpace: "pre-wrap",
-          wordBreak: "break-word",
-          color: "#333",
           overflow: "auto",
           scrollbarWidth: "none",
         }}
