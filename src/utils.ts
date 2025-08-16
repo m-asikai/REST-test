@@ -1,6 +1,10 @@
 import ace from "ace-builds/src-noconflict/ace";
 import type { Config, QueryProps, Query } from "./types";
-import axios, { type AxiosRequestConfig } from "axios";
+import axios, {
+  AxiosError,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+} from "axios";
 
 const baseUrl = "http://localhost:3001";
 
@@ -22,7 +26,7 @@ export const configAce = () => {
 export const postQuery = async (
   args: QueryProps,
   config: AxiosRequestConfig<Config> | undefined
-) => {
+): Promise<AxiosResponse | AxiosError> => {
   let parsedQuery;
   if (args.query) {
     parsedQuery = JSON.parse(args.query);
@@ -30,19 +34,19 @@ export const postQuery = async (
   switch (args.method) {
     case "GET": {
       const res = await axios.get(args.url, config);
-      return res.data;
+      return res;
     }
     case "POST": {
       const res = await axios.post(args.url, parsedQuery, config);
-      return res.data;
+      return res;
     }
     case "PUT": {
       const res = await axios.put(args.url, parsedQuery, config);
-      return res.data;
+      return res;
     }
     case "DELETE": {
       const res = await axios.delete(args.url, config);
-      return res.data;
+      return res;
     }
     default:
       throw new Error("Method not found.");

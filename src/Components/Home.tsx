@@ -2,7 +2,7 @@ import AceEditor from "react-ace";
 import { useState, useEffect } from "react";
 import { Container, Box, type SelectChangeEvent } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
-import { AxiosError, type AxiosRequestConfig } from "axios";
+import { AxiosError, type AxiosRequestConfig, type AxiosResponse } from "axios";
 import {
   configAce,
   deleteQueryFromDb,
@@ -27,9 +27,9 @@ const Home = () => {
   const [query, SetQuery] = useState<string>("");
   const [useErrors, setUseErrors] = useState<boolean>(true);
   const [url, setUrl] = useState<string>("");
-  const [response, setResponse] = useState<object | undefined | AxiosError>(
-    undefined
-  );
+  const [response, setResponse] = useState<
+    AxiosError | AxiosResponse | undefined
+  >(undefined);
   const [queries, setQueries] = useState<Query[]>([]);
   const [savedQueries, setSavedQueries] = useState<Query[]>([]);
   const [method, setMethod] = useState<string>("GET");
@@ -240,7 +240,6 @@ const Home = () => {
             style={{
               margin: "1rem auto 0.5rem auto",
               backgroundColor: "#eee",
-              boxSizing: "content-box",
             }}
           ></AceEditor>
           <SavedQueryList

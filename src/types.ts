@@ -1,4 +1,5 @@
 import type { SelectChangeEvent } from "@mui/material";
+import type { AxiosError, AxiosResponse } from "axios";
 
 export interface JsonError {
   row: number;
@@ -8,7 +9,7 @@ export interface JsonError {
 }
 
 export interface ResponseProps {
-  res?: object;
+  res: AxiosResponse | AxiosError | undefined;
 }
 
 export interface UrlBoxProps {

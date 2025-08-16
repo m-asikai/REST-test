@@ -2,7 +2,11 @@ import { Box, Typography } from "@mui/material";
 import type { ResponseProps } from "../types";
 import classes from "../styles.module.css";
 
-const ResponseBox = ({ res }: ResponseProps) => {
+interface ResponseBoxProps extends ResponseProps {
+  error?: boolean;
+}
+
+const ResponseBox = ({ res, error }: ResponseBoxProps) => {
   return (
     <Box
       sx={{
@@ -27,9 +31,12 @@ const ResponseBox = ({ res }: ResponseProps) => {
         sx={{
           overflow: "auto",
           scrollbarWidth: "none",
+          paddingLeft: 2,
         }}
       >
-        {JSON.stringify(res, null, 2).slice(1, -1)}
+        {error && res?.config
+          ? `URL: ${JSON.stringify(res?.config.url)}`
+          : JSON.stringify(res, null, 1).slice(1, -1)}
       </Typography>
     </Box>
   );

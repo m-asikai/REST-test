@@ -63,8 +63,13 @@ const SavedQueryListEntry = ({
         </Typography>
       </Tooltip>
       {query && (
-        <Typography component="pre" variant="body2" className={classes.text}>
-          Query: {JSON.stringify(query, null, 2).slice(1, -1)}
+        <Typography
+          component="pre"
+          variant="body2"
+          className={classes.text}
+          sx={{ textAlign: "left", color: "blue" }}
+        >
+          <p>Query:</p> {JSON.stringify(query, null, 1)}
         </Typography>
       )}
     </Box>

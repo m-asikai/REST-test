@@ -1,41 +1,72 @@
-import { Stack, Box } from "@mui/material";
-import type { ResponseProps } from "../types";
+import { Stack, Box, Alert } from "@mui/material";
+
 import ResponseBox from "./ResponseBox";
 import { AxiosError } from "axios";
 import classes from "../styles.module.css";
+import type { ResponseProps } from "../types";
 
 const ResponseDisplay = ({ res }: ResponseProps) => {
+  const resBoxStyle = {
+    margin: "auto",
+    marginTop: "8px",
+    width: "80%",
+    maxHeight: 300,
+    textAlign: "left",
+  };
   if (!res || Object.keys(res).length === 0) {
     return null;
   }
+  let message;
   if (res instanceof AxiosError) {
-    return <ResponseBox res={res.response} />;
-  }
-  if (Array.isArray(res)) {
+    message = res.status ? res.message : `${res.message}, check your URL.`;
     return (
-      <Box
-        sx={{
-          margin: "auto",
-          marginTop: "8px",
-          width: "80%",
-          maxHeight: 300,
-        }}
-        className={classes.contentArea}
-      >
-        <Stack
+      <Box sx={resBoxStyle}>
+        <Alert
+          severity="error"
           sx={{
-            alignItems: "center",
-            padding: 2,
+            fontFamily: "monospace",
+            width: "fit-content",
+            margin: "auto",
+            marginBottom: 1,
           }}
         >
-          {res.map((r) => {
-            return <ResponseBox res={r} key={crypto.randomUUID()} />;
-          })}
-        </Stack>
+          {message}
+        </Alert>
+        <ResponseBox res={res} error />
       </Box>
     );
   }
-  return <ResponseBox res={res} />;
+  if (Array.isArray(res.data)) {
+    message = res.status;
+    console.log(message);
+    return (
+      <>
+        <Alert
+          severity="success"
+          sx={{
+            fontFamily: "monospace",
+            width: "fit-content",
+            margin: "auto",
+            marginBottom: 1,
+          }}
+        >
+          {message}
+        </Alert>
+        <Box sx={resBoxStyle} className={classes.contentArea}>
+          <Stack>
+            {res.data.map((r) => {
+              return <ResponseBox res={r} key={crypto.randomUUID()} />;
+            })}
+          </Stack>
+        </Box>
+      </>
+    );
+  }
+  return (
+    <Box sx={resBoxStyle} className={classes.contentArea}>
+      <ResponseBox res={res} />
+    </Box>
+  );
 };
 
 export default ResponseDisplay;

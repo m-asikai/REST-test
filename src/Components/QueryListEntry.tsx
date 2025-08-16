@@ -41,9 +41,16 @@ const QueryListEntry = ({ query, method, url }: Query) => {
         </Typography>
       </Tooltip>
       {query && (
-        <Typography component="pre" variant="body2" className={classes.text}>
-          Query:{" "}
-          {JSON.stringify(query, null, 2).slice(1, -1).replaceAll('"', "")}
+        <Typography
+          component="pre"
+          variant="body2"
+          className={classes.text}
+          sx={{
+            textAlign: "left",
+          }}
+        >
+          <p style={{ color: "blue" }}>Query:</p>{" "}
+          {JSON.stringify(query, null, 1)}
         </Typography>
       )}
     </Box>

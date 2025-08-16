@@ -19,6 +19,14 @@ interface QueryOptionBoxProps {
 }
 
 const QueryOptionBox = (props: QueryOptionBoxProps) => {
+  const buttonStyle = {
+    borderWidth: "3px",
+    backgroundColor: "rgb(238, 238, 238, 1)",
+    borderColor: "rgba(186, 186, 186, 1)",
+    fontFamily: "monospace",
+    color: "#333",
+    margin: 1,
+  };
   return (
     <>
       <Box
@@ -38,25 +46,13 @@ const QueryOptionBox = (props: QueryOptionBoxProps) => {
         />
       </Box>
       <MethodSelector method={props.method} handleChange={props.handleMethod} />
-      <Button
-        variant="outlined"
-        onClick={props.queryHandler}
-        sx={{ fontWeight: "bold", borderWidth: "3px", backgroundColor: "#eee" }}
-      >
+      <Button variant="outlined" onClick={props.queryHandler} sx={buttonStyle}>
         Send query
       </Button>
-      <Button
-        variant="outlined"
-        onClick={props.saveQuery}
-        sx={{ fontWeight: "bold", borderWidth: "3px", backgroundColor: "#eee" }}
-      >
+      <Button variant="outlined" onClick={props.saveQuery} sx={buttonStyle}>
         Save query
       </Button>
-      <Button
-        variant="outlined"
-        onClick={props.handleError}
-        sx={{ fontWeight: "bold", borderWidth: "3px", backgroundColor: "#eee" }}
-      >
+      <Button variant="outlined" onClick={props.handleError} sx={buttonStyle}>
         Errors: {props.error ? "On." : "Off."}
       </Button>
     </>
