@@ -4,33 +4,37 @@ import { Button, Input } from "@mui/material";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import { loginAccount } from "../utils";
 import { AxiosError } from "axios";
+import Error from "./Error";
 
 const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
 
   const login = async (
     e: React.FormEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLDivElement>
   ) => {
     e.preventDefault();
-    try {
-      const res = await loginAccount({ user: { username, password } });
-      if (res.token && res.username) {
-        localStorage.setItem("token", res.token);
-        localStorage.setItem("username", res.username);
-        navigate("/");
-      } else {
-        throw new Error("Something went wrong in the response.");
-      }
-    } catch (error: unknown) {
-      if (error instanceof AxiosError) {
-        console.log("Axios error:", error.response?.data?.error);
-        console.log("Status:", error.response?.status);
-      } else if (error instanceof Error) {
-        console.log("Error message:", error.message);
-      } else {
-        console.log("Unknown error:", error);
+    if (!username) {
+      setMessage("Enter username.");
+      setTimeout(() => setMessage(""), 3000);
+    } else if (!password) {
+      setMessage("Enter password.");
+      setTimeout(() => setMessage(""), 3000);
+    } else {
+      try {
+        const res = await loginAccount({ user: { username, password } });
+        if (res.token && res.username) {
+          localStorage.setItem("token", res.token);
+          localStorage.setItem("username", res.username);
+          navigate("/");
+        }
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          setMessage(error.response?.data?.error);
+          setTimeout(() => setMessage(""), 3000);
+        }
       }
     }
   };
@@ -74,6 +78,7 @@ const Login = () => {
         onChange={(e) => setPassword(e.target.value)}
         sx={inputStyle}
       />
+      <Error message={message} />
       <Button onClick={login}>
         {" "}
         <p

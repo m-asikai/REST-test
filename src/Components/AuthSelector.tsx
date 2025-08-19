@@ -12,23 +12,52 @@ const AuthSelector = ({
   handleChange,
   handleToken,
   authorization,
+  token,
 }: AuthSelectorProps) => {
   return (
     <>
       <FormControl sx={{ width: "fit-content", minWidth: 140 }}>
         <InputLabel id="input">Authorization</InputLabel>
         <Select
+          sx={{
+            fontFamily: "monospace",
+          }}
           labelId="input"
           defaultValue="Select"
           value={authorization}
           onChange={handleChange}
           label="Authorization"
         >
-          <MenuItem value={"Basic "}>Basic</MenuItem>
-          <MenuItem value={"Bearer "}>Bearer</MenuItem>
+          {authorization && (
+            <MenuItem
+              value={""}
+              sx={{
+                fontFamily: "monospace",
+              }}
+            >
+              None
+            </MenuItem>
+          )}
+          <MenuItem
+            value={"Bearer "}
+            sx={{
+              fontFamily: "monospace",
+            }}
+          >
+            Bearer
+          </MenuItem>
+          <MenuItem
+            value={"Basic "}
+            sx={{
+              fontFamily: "monospace",
+            }}
+          >
+            Basic
+          </MenuItem>
         </Select>
       </FormControl>
       <TextField
+        value={token}
         label="Token"
         variant="outlined"
         onChange={(e) => handleToken(e.target.value)}

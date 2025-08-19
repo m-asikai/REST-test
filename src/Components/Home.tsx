@@ -37,6 +37,32 @@ const Home = () => {
   const [authorization, setAuthorization] = useState<string>("");
   const [token, setToken] = useState<string | null>("");
 
+  useEffect(() => {
+    if (authorization === "") {
+      setToken("");
+    }
+  }, [authorization]);
+  useEffect(() => {
+    const loadData = async () => {
+      const username: string | null = localStorage.getItem("username");
+      const token: string | null = localStorage.getItem("token");
+      configAce();
+
+      if (token && username) {
+        try {
+          const loadedQueries = await loadQueries();
+          if (loadedQueries) {
+            setSavedQueries(loadedQueries);
+          }
+        } catch (error) {
+          console.log("Error loading queries:", error);
+        }
+      }
+    };
+
+    loadData();
+  }, []);
+
   const onUrlChange = (value: string) => {
     setUrl(value);
   };
@@ -52,28 +78,6 @@ const Home = () => {
       return res;
     }
   };
-
-  useEffect(() => {
-    const loadData = async () => {
-      const username: string | null = localStorage.getItem("username");
-      const token: string | null = localStorage.getItem("token");
-      configAce();
-
-      if (token && username) {
-        setToken(localStorage.getItem("token"));
-        try {
-          const loadedQueries = await loadQueries();
-          if (loadedQueries) {
-            setSavedQueries(loadedQueries);
-          }
-        } catch (error) {
-          console.log("Error loading queries:", error);
-        }
-      }
-    };
-
-    loadData();
-  }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const val = (_annotations: JsonError[]) => {
@@ -105,7 +109,6 @@ const Home = () => {
 
   const handleDelete = async (id: string) => {
     const t = localStorage.getItem("token");
-    console.log(t);
     if (t) {
       const con: AxiosRequestConfig<Config> = {
         headers: {
@@ -151,10 +154,17 @@ const Home = () => {
         query: query,
         url,
       };
+
       if (authorization && token) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(token);
+        const base64 = btoa(String.fromCharCode(...data));
         setConfig({
           headers: {
-            authorization: `${authorization} ${token}`,
+            authorization:
+              authorization === "Bearer "
+                ? `${authorization}${token}`
+                : `${authorization}${base64}`,
           },
         });
       }
@@ -177,6 +187,7 @@ const Home = () => {
       if (e instanceof AxiosError) {
         setResponse(e);
       }
+      console.log(e);
     }
   };
 
@@ -193,7 +204,6 @@ const Home = () => {
   };
 
   const handleLogOut = () => {
-    setToken(null);
     setSavedQueries([]);
     setQueries([]);
     localStorage.removeItem("token");
@@ -206,8 +216,16 @@ const Home = () => {
 
   return (
     <Container sx={{ textAlign: "center" }}>
-      <UserLoginLogout token={token} handleLogOut={handleLogOut} />
-      <p>https://jsonplaceholder.typicode.com/posts</p>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          width: "100%",
+          marginBottom: 2,
+        }}
+      >
+        <UserLoginLogout handleLogOut={handleLogOut} />
+      </Box>
       <QueryOptionBox
         onUrlChange={onUrlChange}
         handleAuth={handleAuth}
@@ -220,6 +238,7 @@ const Home = () => {
         method={method}
         error={useErrors}
         url={url}
+        token={token}
       />
       <Box sx={{ width: "100%", margin: "auto" }}>
         <Box sx={{ display: "flex" }}>

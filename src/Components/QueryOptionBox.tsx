@@ -16,6 +16,7 @@ interface QueryOptionBoxProps {
   method: string;
   error: boolean;
   url: string;
+  token: string | null;
 }
 
 const QueryOptionBox = (props: QueryOptionBoxProps) => {
@@ -43,6 +44,7 @@ const QueryOptionBox = (props: QueryOptionBoxProps) => {
           handleChange={props.handleAuth}
           handleToken={props.handleToken}
           authorization={props.authorization}
+          token={props.token}
         />
       </Box>
       <MethodSelector method={props.method} handleChange={props.handleMethod} />
@@ -53,7 +55,7 @@ const QueryOptionBox = (props: QueryOptionBoxProps) => {
         Save query
       </Button>
       <Button variant="outlined" onClick={props.handleError} sx={buttonStyle}>
-        Errors: {props.error ? "On." : "Off."}
+        Editor errors: {props.error ? "On." : "Off."}
       </Button>
     </>
   );

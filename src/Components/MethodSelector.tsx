@@ -36,7 +36,7 @@ const MethodSelector = ({ handleChange, method }: SelectorProps) => {
           onChange={handleChange}
           label="Method"
           sx={{
-            fontWeight: "bold",
+            fontFamily: "monospace",
             color: getMethodColor(method),
             "& .MuiSelect-select": {
               color: getMethodColor(method),
@@ -47,24 +47,32 @@ const MethodSelector = ({ handleChange, method }: SelectorProps) => {
             value={"GET"}
             sx={{
               color: "green",
+              fontFamily: "monospace",
               fontWeight: "bold",
             }}
           >
             GET
           </MenuItem>
-          <MenuItem value={"POST"} sx={{ color: "blue", fontWeight: "bold" }}>
+          <MenuItem
+            value={"POST"}
+            sx={{ color: "blue", fontFamily: "monospace", fontWeight: "bold" }}
+          >
             POST
           </MenuItem>
           <MenuItem
             value={"PUT"}
             sx={{
               color: "orange",
+              fontFamily: "monospace",
               fontWeight: "bold",
             }}
           >
             PUT
           </MenuItem>
-          <MenuItem value={"DELETE"} sx={{ color: "red", fontWeight: "bold" }}>
+          <MenuItem
+            value={"DELETE"}
+            sx={{ color: "red", fontFamily: "monospace", fontWeight: "bold" }}
+          >
             DELETE
           </MenuItem>
         </Select>

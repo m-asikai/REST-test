@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Box } from "@mui/material";
 
 interface LogOutProps {
   handleLogOut: () => void;
@@ -6,17 +6,13 @@ interface LogOutProps {
 
 const LogOut = ({ handleLogOut }: LogOutProps) => {
   const usernameStyle = {
-    width: "fit-content",
-    padding: "8px",
     fontSize: "20px",
-    backgroundColor: "#b9dcfeff",
-    color: "white",
-    borderRadius: "8px",
-    margin: "auto",
-    marginTop: "8px",
+    color: "#333",
+    textDecoration: "underline",
   };
   return (
-    <>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+      <p style={usernameStyle}>{localStorage.getItem("username")}</p>
       <Button
         variant="outlined"
         onClick={handleLogOut}
@@ -31,14 +27,12 @@ const LogOut = ({ handleLogOut }: LogOutProps) => {
           borderWidth: 2,
           "&:hover": {
             backgroundColor: "#e3f2fd",
-            borderWidth: 2,
           },
         }}
       >
         Log Out
       </Button>
-      <p style={usernameStyle}>{localStorage.getItem("username")}</p>
-    </>
+    </Box>
   );
 };
 

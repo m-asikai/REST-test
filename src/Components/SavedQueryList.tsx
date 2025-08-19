@@ -20,7 +20,7 @@ const SavedQueryList = ({
           color: "#333",
         }}
       >
-        No queries saved.
+        Login to save queries.
       </Typography>
     );
   }

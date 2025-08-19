@@ -53,4 +53,5 @@ export interface AuthSelectorProps {
   handleChange: (e: SelectChangeEvent) => void;
   handleToken: (token: string) => void;
   authorization: string;
+  token: string | null;
 }

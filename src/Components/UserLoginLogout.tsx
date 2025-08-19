@@ -1,13 +1,13 @@
 import { Box, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import LogOut from "./Logout";
+import LogOut from "./LogOut";
 
 interface UserLoginLogoutProps {
-  token: string | null;
   handleLogOut: () => void;
 }
 
-const UserLoginLogout = ({ token, handleLogOut }: UserLoginLogoutProps) => {
+const UserLoginLogout = ({ handleLogOut }: UserLoginLogoutProps) => {
+  const token = localStorage.getItem("token");
   return (
     <>
       {!token && (
@@ -63,7 +63,17 @@ const UserLoginLogout = ({ token, handleLogOut }: UserLoginLogoutProps) => {
           </Button>
         </Box>
       )}
-      {token && <LogOut handleLogOut={handleLogOut} />}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 2,
+          mb: 3,
+          mt: 2,
+        }}
+      >
+        {token && <LogOut handleLogOut={handleLogOut} />}
+      </Box>
     </>
   );
 };

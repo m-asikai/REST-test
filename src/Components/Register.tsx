@@ -3,20 +3,45 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import { Input, Button } from "@mui/material";
 import { useState } from "react";
 import { registerAccount } from "../utils";
+import Error from "./Error";
+import { AxiosError } from "axios";
 
 const Register = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmationPassword, setConfirmationPassword] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
   const register = async () => {
     if (password !== confirmationPassword) {
-      console.log("Passwords don't match");
+      setMessage("Passwords don't match.");
+      setTimeout(() => setMessage(""), 3000);
     } else {
-      const res = await registerAccount({ user: { username, password } });
-      navigate("/");
-      localStorage.setItem("token", res.token);
-      localStorage.setItem("username", res.username);
+      try {
+        const res = await registerAccount({ user: { username, password } });
+        navigate("/");
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("username", res.username);
+      } catch (e: unknown) {
+        if (e instanceof AxiosError) {
+          setMessage(e.response?.data?.error);
+          setTimeout(() => setMessage(""), 3000);
+        }
+      }
+    }
+  };
+
+  const handleUsername = (input: string) => {
+    setUsername(input);
+  };
+  const handlePassword = (input: string) => {
+    setPassword(input);
+  };
+  const handleConPassword = (input: string) => {
+    setConfirmationPassword(input);
+    if (input.length === password.length && input !== password) {
+      setMessage("Passwords don't match.");
+      setTimeout(() => setMessage(""), 3000);
     }
   };
 
@@ -54,21 +79,22 @@ const Register = () => {
       </Link>
       <Input
         placeholder="Username"
-        onChange={(e) => setUsername(e.target.value)}
+        onChange={(e) => handleUsername(e.target.value)}
         sx={inputStyle}
       />
       <Input
         type="password"
         placeholder="Password"
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(e) => handlePassword(e.target.value)}
         sx={inputStyle}
       />
       <Input
         type="password"
         placeholder="Re-enter password"
-        onChange={(e) => setConfirmationPassword(e.target.value)}
+        onChange={(e) => handleConPassword(e.target.value)}
         sx={inputStyle}
       />
+      <Error message={message} />
       <Button onClick={register}>
         <p style={{ fontSize: "20px" }}>Register</p>
       </Button>

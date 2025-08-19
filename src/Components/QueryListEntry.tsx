@@ -23,7 +23,7 @@ const QueryListEntry = ({ query, method, url }: Query) => {
       >
         Method: {method}
       </Typography>
-      <Tooltip title={url}>
+      <Tooltip title={url} arrow>
         <Typography
           variant="body2"
           className={classes.text}
@@ -40,6 +40,7 @@ const QueryListEntry = ({ query, method, url }: Query) => {
           Url: {url}
         </Typography>
       </Tooltip>
+
       {query && (
         <Typography
           component="pre"

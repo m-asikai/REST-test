@@ -67,9 +67,10 @@ const SavedQueryListEntry = ({
           component="pre"
           variant="body2"
           className={classes.text}
-          sx={{ textAlign: "left", color: "blue" }}
+          sx={{ textAlign: "left" }}
         >
-          <p>Query:</p> {JSON.stringify(query, null, 1)}
+          Query:{" "}
+          <p style={{ color: "#4a66c9ff" }}>{JSON.stringify(query, null, 1)}</p>
         </Typography>
       )}
     </Box>

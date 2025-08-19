@@ -38,7 +38,6 @@ const ResponseDisplay = ({ res }: ResponseProps) => {
   }
   if (Array.isArray(res.data)) {
     message = res.status;
-    console.log(message);
     return (
       <>
         <Alert
@@ -62,10 +61,25 @@ const ResponseDisplay = ({ res }: ResponseProps) => {
       </>
     );
   }
+  message = res.status;
   return (
-    <Box sx={resBoxStyle} className={classes.contentArea}>
-      <ResponseBox res={res} />
-    </Box>
+    <>
+      {" "}
+      <Alert
+        severity="success"
+        sx={{
+          fontFamily: "monospace",
+          width: "fit-content",
+          margin: "auto",
+          marginBottom: 1,
+        }}
+      >
+        {message}
+      </Alert>
+      <Box sx={resBoxStyle} className={classes.contentArea}>
+        <ResponseBox res={res.data} />
+      </Box>
+    </>
   );
 };
 
