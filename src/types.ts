@@ -1,6 +1,21 @@
 import type { SelectChangeEvent } from "@mui/material";
 import type { AxiosError, AxiosResponse } from "axios";
 
+export interface UserInfoProps {
+  user: {
+    username: string;
+    password: string;
+  };
+}
+
+export interface QuerySaveProps {
+  username: string;
+  id: string;
+  url: string;
+  method: string;
+  query?: object;
+}
+
 export interface JsonError {
   row: number;
   column: number;

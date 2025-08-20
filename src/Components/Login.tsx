@@ -96,6 +96,10 @@ const Login = () => {
           No account? Register here.
         </p>
       </Link>
+      <p style={{ color: "#d21919ff", fontSize: "20px" }}>
+        The backend spins down after inactivity so the server response may be
+        slow.
+      </p>
     </div>
   );
 };

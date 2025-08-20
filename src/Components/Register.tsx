@@ -56,53 +56,62 @@ const Register = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        width: "fit-content",
-        margin: "auto",
-        padding: "20px",
-        border: "2px",
-        borderColor: "#1976d2",
-        borderStyle: "solid",
-        borderRadius: "16px",
       }}
     >
-      <Link to="/">
-        <HomeOutlinedIcon
-          sx={{
-            fontSize: "60px",
-            color: "#1976d2",
-            borderRadius: "8px",
-            "&:hover": {
-              backgroundColor: "#c4d8ecff",
-            },
-          }}
+      <div
+        style={{
+          width: "fit-content",
+          margin: "auto",
+          padding: "20px",
+          border: "2px",
+          borderColor: "#1976d2",
+          borderStyle: "solid",
+          borderRadius: "16px",
+        }}
+      >
+        <Link to="/">
+          <HomeOutlinedIcon
+            sx={{
+              fontSize: "60px",
+              color: "#1976d2",
+              borderRadius: "8px",
+              "&:hover": {
+                backgroundColor: "#c4d8ecff",
+              },
+            }}
+          />
+        </Link>
+        <Input
+          placeholder="Username"
+          onChange={(e) => handleUsername(e.target.value)}
+          sx={inputStyle}
         />
-      </Link>
-      <Input
-        placeholder="Username"
-        onChange={(e) => handleUsername(e.target.value)}
-        sx={inputStyle}
-      />
-      <Input
-        type="password"
-        placeholder="Password"
-        onChange={(e) => handlePassword(e.target.value)}
-        sx={inputStyle}
-      />
-      <Input
-        type="password"
-        placeholder="Re-enter password"
-        onChange={(e) => handleConPassword(e.target.value)}
-        sx={inputStyle}
-      />
-      <Error message={message} />
-      <Button onClick={register}>
-        <p style={{ fontSize: "20px" }}>Register</p>
-      </Button>
-      <Link to="/login">
-        <p style={{ color: "#1976d2", fontSize: "20px" }}>
-          Already have an account? Login here.
-        </p>
-      </Link>
+        <Input
+          type="password"
+          placeholder="Password"
+          onChange={(e) => handlePassword(e.target.value)}
+          sx={inputStyle}
+        />
+        <Input
+          type="password"
+          placeholder="Re-enter password"
+          onChange={(e) => handleConPassword(e.target.value)}
+          sx={inputStyle}
+        />
+        <Error message={message} />
+        <Button onClick={register}>
+          <p style={{ fontSize: "20px" }}>Register</p>
+        </Button>
+        <Link to="/login">
+          <p style={{ color: "#1976d2", fontSize: "20px" }}>
+            Already have an account? Login here.
+          </p>
+        </Link>
+      </div>
+      <p style={{ color: "#d21919ff", fontSize: "20px" }}>
+        The backend spins down after inactivity so the server response may be
+        slow.
+      </p>
     </div>
   );
 };

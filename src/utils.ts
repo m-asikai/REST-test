@@ -1,12 +1,18 @@
 import ace from "ace-builds/src-noconflict/ace";
-import type { Config, QueryProps, Query } from "./types";
+import type {
+  Config,
+  QueryProps,
+  Query,
+  UserInfoProps,
+  QuerySaveProps,
+} from "./types";
 import axios, {
   AxiosError,
   type AxiosRequestConfig,
   type AxiosResponse,
 } from "axios";
 
-const baseUrl = "http://localhost:3001";
+const baseUrl = "https://rest-backend-dm19.onrender.com";
 
 export const configAce = () => {
   ace.config.set(
@@ -53,21 +59,6 @@ export const postQuery = async (
   }
 };
 
-interface UserInfoProps {
-  user: {
-    username: string;
-    password: string;
-  };
-}
-
-interface QuerySaveProps {
-  username: string;
-  id: string;
-  url: string;
-  method: string;
-  query?: object;
-}
-
 export const registerAccount = async ({ user }: UserInfoProps) => {
   const res = await axios.post(`${baseUrl}/api/user/register/`, user);
   console.log(res.data);
@@ -84,8 +75,13 @@ export const saveQueryDb = async (queryToSave: QuerySaveProps) => {
   return res.data;
 };
 
-export const getSavedQueries = async (username: string): Promise<Query[]> => {
-  const res = await axios.get(`${baseUrl}/api/query/${username}/queries`);
+export const getSavedQueries = async (): Promise<Query[]> => {
+  const config = {
+    headers: {
+      authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  };
+  const res = await axios.get(`${baseUrl}/api/query/user-queries`, config);
   return res.data;
 };
 

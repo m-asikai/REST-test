@@ -22,6 +22,7 @@ import QueryList from "./QueryList";
 import SavedQueryList from "./SavedQueryList";
 import UserLoginLogout from "./UserLoginLogout";
 import QueryOptionBox from "./QueryOptionBox";
+import Error from "./Error";
 
 const Home = () => {
   const [query, SetQuery] = useState<string>("");
@@ -36,6 +37,7 @@ const Home = () => {
   const [config, setConfig] = useState<AxiosRequestConfig<Config>>();
   const [authorization, setAuthorization] = useState<string>("");
   const [token, setToken] = useState<string | null>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
     if (authorization === "") {
@@ -55,7 +57,7 @@ const Home = () => {
             setSavedQueries(loadedQueries);
           }
         } catch (error) {
-          console.log("Error loading queries:", error);
+          console.error("Error loading queries:", error);
         }
       }
     };
@@ -72,9 +74,9 @@ const Home = () => {
   };
 
   const loadQueries = async () => {
-    const username: string | null = localStorage.getItem("username");
-    if (username) {
-      const res = await getSavedQueries(username);
+    const token: string | null = localStorage.getItem("token");
+    if (token) {
+      const res = await getSavedQueries();
       return res;
     }
   };
@@ -87,7 +89,10 @@ const Home = () => {
   const saveQuery = async () => {
     const username: string | null = localStorage.getItem("username");
     if (!username) {
-      console.log("Login");
+      setErrorMessage("Login to save queries.");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
       return;
     }
     const queryToSave: Query = {
@@ -148,6 +153,13 @@ const Home = () => {
   };
 
   const queryHandler = async () => {
+    if (!url) {
+      setErrorMessage("URL is required.");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+      return;
+    }
     try {
       const queryToPost: QueryProps = {
         method,
@@ -219,13 +231,21 @@ const Home = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
+          alignItems: "center",
           width: "100%",
           marginBottom: 2,
         }}
       >
-        <UserLoginLogout handleLogOut={handleLogOut} />
+        <Box sx={{ flex: 1 }} />
+        <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
+          <Error message={errorMessage} />
+        </Box>
+        <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
+          <UserLoginLogout handleLogOut={handleLogOut} />
+        </Box>
       </Box>
+
       <QueryOptionBox
         onUrlChange={onUrlChange}
         handleAuth={handleAuth}
