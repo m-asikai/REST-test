@@ -43,6 +43,7 @@ export interface SavedQuery extends Query {
 
 export interface SavedQueryListProps extends QueryListProps {
   handleDelete: (id: string) => void;
+  loadingMessage: string;
 }
 
 export interface Query {

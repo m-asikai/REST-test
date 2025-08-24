@@ -38,6 +38,7 @@ const Home = () => {
   const [authorization, setAuthorization] = useState<string>("");
   const [token, setToken] = useState<string | null>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [loadingMessage, setLoadingMessage] = useState<string>("");
 
   useEffect(() => {
     if (authorization === "") {
@@ -52,13 +53,19 @@ const Home = () => {
 
       if (token && username) {
         try {
+          setLoadingMessage("Loading queries...");
           const loadedQueries = await loadQueries();
           if (loadedQueries) {
             setSavedQueries(loadedQueries);
+            if (loadedQueries.length === 0) {
+              setLoadingMessage("No saved queries.");
+            }
           }
         } catch (error) {
           console.error("Error loading queries:", error);
         }
+      } else {
+        setLoadingMessage("Login to save queries.");
       }
     };
 
@@ -218,6 +225,7 @@ const Home = () => {
   const handleLogOut = () => {
     setSavedQueries([]);
     setQueries([]);
+    setLoadingMessage("Login to save queries.");
     localStorage.removeItem("token");
     localStorage.removeItem("username");
   };
@@ -285,6 +293,7 @@ const Home = () => {
             queries={savedQueries}
             handleClick={selectQuery}
             handleDelete={handleDelete}
+            loadingMessage={loadingMessage}
           />
         </Box>
         <ResponseDisplay res={response} />

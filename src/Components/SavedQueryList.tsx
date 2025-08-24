@@ -7,11 +7,9 @@ const SavedQueryList = ({
   queries,
   handleClick,
   handleDelete,
+  loadingMessage,
 }: SavedQueryListProps) => {
   if (queries.length === 0) {
-    const message = localStorage.getItem("token")
-      ? "No saved queries."
-      : "Login to save queries.";
     return (
       <Typography
         sx={{
@@ -23,7 +21,7 @@ const SavedQueryList = ({
           color: "#333",
         }}
       >
-        {message}
+        {loadingMessage}
       </Typography>
     );
   }

@@ -61,12 +61,14 @@ const Register = () => {
       <div
         style={{
           width: "fit-content",
-          margin: "auto",
+          alignItems: "center",
           padding: "20px",
           border: "2px",
           borderColor: "#1976d2",
           borderStyle: "solid",
           borderRadius: "16px",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <Link to="/">
