@@ -33,7 +33,11 @@ const SavedQueryListEntry = ({
         }}
         onClick={(e) => {
           e.stopPropagation();
-          handleDelete(id);
+          if (
+            window.confirm("Are you sure you want to delete this saved query?")
+          ) {
+            handleDelete(id);
+          }
         }}
       >
         <ClearIcon />

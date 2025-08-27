@@ -102,6 +102,13 @@ const Home = () => {
       }, 3000);
       return;
     }
+    if (!url) {
+      setErrorMessage("Couldn't save query. Please enter an URL.");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+      return;
+    }
     const queryToSave: Query = {
       id: uuidv4(),
       method,
