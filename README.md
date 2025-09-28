@@ -1,6 +1,6 @@
 ## REST-tester
 
-Simple webapp to test web APIs and persist queries for future use. GET, POST, PUT and DELETE-methods implemented. Made with React and styled with Material UI. Barebones [backend](https://github.com/m-asikai/REST-back) made with ExpressJS connected to a database made with MongoDB.
+Simple [webapp](https://users.metropolia.fi/~mikaelea/rest-test/) to test web APIs and persist queries for future use. GET, POST, PUT and DELETE-methods implemented. Made with React and styled with Material UI. Barebones [backend](https://github.com/m-asikai/REST-back) made with ExpressJS connected to a database made with MongoDB.
 
 Frontpage of a logged in user.
 ![Frontpage](/images/frontpage.png)
